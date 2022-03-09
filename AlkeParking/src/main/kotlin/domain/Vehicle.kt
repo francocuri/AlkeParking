@@ -3,17 +3,12 @@ package domain
 import java.util.*
 
 /*
-    Ejercicio 1
-    Se define vehicles como un Set ya que es una colección que no admite repetidos
-    y satisface la consigna de:
-    Cuando se va a ingresar un vehículo se ingresa la placa y el tipo, y se valida
-    que no haya ningún otro vehículo con esa misma placa en el estacionamiento.
- */
+    Exercise 1
 
-/*
-    Ejercicio 2
-    Consigna 2) No puede cambiar el tipo del vehículo en el tiempo,
-    por lo tanto definimos la constante 'type' por constructor
+    Vehicles is defined as a Set, since it is a collection that does not allow duplicates
+    and satisfies the requirement of:
+    'When a vehicle is going to be entered, the license plate and type are entered, and it is validated
+    that there is no other vehicle with that same license plate in the parking lot.'
  */
 
 class Vehicle(val plate: String, val type: VehicleType,var checkInTime: Calendar, var discountCard: String? = null)  {
