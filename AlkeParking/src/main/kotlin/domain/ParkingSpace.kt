@@ -15,12 +15,12 @@ data class ParkingSpace(var vehicle: Vehicle, val parking: Parking){
         }
 
     fun checkOutVehicle(plate: String) {
-        if(vehicle.plate == plate){
+        if(parking.isInParking(vehicle) && vehicle.plate == plate){
 
-            var hasDiscountCard: Boolean = false
+            var hasDiscountCard = false
                 vehicle.discountCard?.let { hasDiscountCard = true }
 
-            val amountToPay = calculateFee(vehicle.type, parkedTime.toInt(),hasDiscountCard)
+            val amountToPay = calculateFee(vehicle.type,hasDiscountCard)
             removeVehicle(vehicle)
             onSuccess(amountToPay)
         }
@@ -29,13 +29,14 @@ data class ParkingSpace(var vehicle: Vehicle, val parking: Parking){
         }
     }
 
-    fun calculateFee(type: VehicleType, parkedTime: Int, hasDiscountCard: Boolean) : Int {
+    // We removed parkedTime parameter because we already have a local variable with this value
+    fun calculateFee(type: VehicleType, hasDiscountCard: Boolean) : Int {
         var amountToPay = type.price
 
         if (parkedTime > 120){
-            var extraTime = parkedTime - 120
+            val extraTime = parkedTime - 120
             // We use ceil because it always round up and we consider the extra amount of the last minutes
-            var auxAmount = ceil(extraTime.toDouble() / 15)
+            val auxAmount = ceil(extraTime.toDouble() / 15)
 
             val extraAmount = auxAmount * 5
             amountToPay += extraAmount.toInt()
@@ -53,9 +54,9 @@ data class ParkingSpace(var vehicle: Vehicle, val parking: Parking){
 
     fun onSuccess(amountToPay: Int){
         println("Your fee is $$amountToPay. Come back soon.")
-        parking.history.first.inc()
-        parking.history.second.plus(amountToPay)
-        println(parking.history)
+        // We create a new instance of Pair because it is immutable
+        val newHistory = Pair(parking.history.first + 1, parking.history.second + amountToPay)
+        parking.history = newHistory
     }
 
     fun onError(){
@@ -63,6 +64,7 @@ data class ParkingSpace(var vehicle: Vehicle, val parking: Parking){
     }
 
     fun removeVehicle(vehicle: Vehicle){
-        parking.vehicles.remove(vehicle)
+        // We delegate this responsibility to Parking
+        parking.removeVehicle(vehicle)
     }
 }
